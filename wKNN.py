@@ -19,7 +19,7 @@ class KNearestNeighbors:
 
   def predict(self , new_points) :
 
-    distances = [[euclidean_distance(point , new_points), category] for category in self.points for point in self.points[category]]
+    distances = [[weighted_euclidean_distance(point , new_points), category] for category in self.points for point in self.points[category]]
 
     labels = [category[1] for category in sorted(distances)[:self.k]]
 
