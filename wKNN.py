@@ -1,30 +1,67 @@
 import numpy as np
-from collections import Counter
+import pandas as pd
 
 
-def weighted_euclidean_distance(p,q) :
+def calc_time_diff (days_apart , lambda_decay = 0.2) :
 
-  pass
+    return np.exp(-lambda_decay * abs(days_apart))
 
-class KNearestNeighbors:
 
-  def __init__(self, k =3):
-    self.k = k
-    self.points = None
+def calc_env_weight (target_features , candidate_features , rf_weights_dict) :
 
-     
-  def fit(self):
-    self.points = points
-    return self
+    weather_distance = 0.0 
 
-  def predict(self , new_points) :
+    for feature , importance in rf_weights_dict.items():
 
-    distances = [[weighted_euclidean_distance(point , new_points), category] for category in self.points for point in self.points[category]]
+        diff =  abs(target_features[feature] - candidate_features[feature])
+        weighted_diff = diff * importance
+        weather_distance += weighted_diff
 
-    labels = [category[1] for category in sorted(distances)[:self.k]]
 
-    result = Counter(labels).most_common(1)[0][0]
+    env_weight = 1 / (weather_distance + 1e-5)
 
-    return result
+    return env_weight
 
-  
+
+class wKNN : 
+
+    def __init__(self , k = 5 , lambda_decay = 0.2 , rain_threshold = 5.0):
+        
+        self.k = k
+        self.lambda_decay = lambda_decay
+        self.rain_threshold = rain_threshold
+
+
+        self.data = None
+        self.dist_matrix = None
+        self.sim_matrix = None
+        self.target_weights = None
+
+
+    def fit(self, data , dist_matrix , sim_matrix , rf_weights_dict) :
+
+        self.data = data.copy()
+        self.dist_matrix = dist_matrix
+        self.sim_matrix = sim_matrix
+        self.rf_weights_dict = rf_weights_dict
+
+        self.data['Date'] = pd.to_datetime(self.data['Date'])
+
+        return self
+
+
+    def predict(self , target_row , target_pm_col , known_pool): 
+
+        target_station = target_row['Station']
+        target_date = target_row['Date']
+        target_rain = target_row['era5_precip_mm']
+
+        
+        
+
+        
+
+
+
+
+    
