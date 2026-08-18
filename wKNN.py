@@ -159,8 +159,13 @@ class wKNN :
                 predicted_val = self.predict(target_row , col , known_pool)
                 completed_df.loc[idx,col] = predicted_val
 
+                known_pool = completed_df[completed_df[col].notna()].copy()
 
-            print('Imputation complete')
+
+            print(f'Imputation complete for column : {col}')
+
+
+        print('Imputation complete')
 
 
         return completed_df
